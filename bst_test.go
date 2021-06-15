@@ -67,3 +67,28 @@ func TestBST(t *testing.T) {
 		t.Fatalf("REMOVING AN ELEMENT MUST DECREASE THE SIZE")
 	}
 }
+
+func TestBST_IntervalSearch(t *testing.T) {
+	// Creates data
+	var points1 []Comparable
+	// Create all point from 0 to 499
+	for i := 0; i < 500; i ++ {
+		rand.Seed(time.Now().UnixNano())
+		points1 = append(points1, &Point{
+			p:       i,
+			payload: []int{rand.Intn(2000)},
+		})
+	}
+	iteration := 200
+	tree1 := NewBSTReady(points1[:])
+	for i := 0; i < iteration; i++ {
+		rand.Seed(time.Now().UnixNano())
+		start := rand.Intn(250) // from 0 to 249
+		rand.Seed(time.Now().UnixNano())
+		end := rand.Intn(250) + 250  // from 250 to 499
+		res:= tree1.IntervalSearch(&Point{start, nil}, &Point{end, nil})
+		if len(res) != (end - start + 1) {
+			t.Fatalf("EXPECTING %d ELEMENTS, RECEIVED %d", end - start + 1, len(res))
+		}
+	}
+}

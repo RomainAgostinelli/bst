@@ -7,7 +7,7 @@ import (
 
 // BST struct used to store a binary search tree
 type BST struct {
-	tree *binarytree.BinaryTree
+	tree    *binarytree.BinaryTree
 	crtSize int
 }
 
@@ -16,13 +16,12 @@ type Comparable interface {
 	CompareTo(other Comparable) int
 }
 
-
 // NewBSTReady creates new Binary Search Tree with values in sorted.
 // Method to use when the data are ready: sorted and no duplicates
 // PRE: sorted, no duplicate
 func NewBSTReady(sorted []Comparable) *BST {
 	return &BST{
-		tree:    optimalBST(sorted, 0, len(sorted) - 1),
+		tree:    optimalBST(sorted, 0, len(sorted)-1),
 		crtSize: len(sorted),
 	}
 }
@@ -30,7 +29,7 @@ func NewBSTReady(sorted []Comparable) *BST {
 // NewBST creates an empty Binary Search Tree
 func NewBST() *BST {
 	return &BST{
-		tree: &binarytree.BinaryTree{},
+		tree:    &binarytree.BinaryTree{},
 		crtSize: 0,
 	}
 }
@@ -81,6 +80,32 @@ func (bst *BST) Size() int {
 	return bst.crtSize
 }
 
+// IntervalSearch returns all elements in the interval [min, max] (inclusive)
+func (bst *BST) IntervalSearch(min, max Comparable) []Comparable {
+	return intervalSearch(bst.tree.Root(), min, max)
+}
+
+// intervalSearch returns all elements in the interval [min, max] (inclusive) from the iterator position
+func intervalSearch(itr *binarytree.Iterator, min, max Comparable) []Comparable {
+	var res []Comparable
+	if itr.IsBottom() {
+		return res
+	}
+	current := itr.Consult().(Comparable)
+	if current.CompareTo(min) >= 0 && current.CompareTo(max) <= 0 {
+		res = append(res, current)
+	}
+	if itr.IsLeaf() { // no more left or right subtree
+		return res
+	}
+	if current.CompareTo(max) < 0 { // if current < max --> check right
+		res = append(res, intervalSearch(itr.Right(), min, max)...)
+	}
+	if current.CompareTo(min) > 0 { // if current > min --> check left
+		res = append(res, intervalSearch(itr.Left(), min, max)...)
+	}
+	return res
+}
 
 // locate returns the position where the comparable is or where it must be added if not present
 func (bst *BST) locate(e Comparable) *binarytree.Iterator {
