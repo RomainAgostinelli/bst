@@ -72,7 +72,7 @@ func TestBST_IntervalSearch(t *testing.T) {
 	// Creates data
 	var points1 []Comparable
 	// Create all point from 0 to 499
-	for i := 0; i < 500; i ++ {
+	for i := 0; i < 500; i++ {
 		rand.Seed(time.Now().UnixNano())
 		points1 = append(points1, &Point{
 			p:       i,
@@ -85,10 +85,81 @@ func TestBST_IntervalSearch(t *testing.T) {
 		rand.Seed(time.Now().UnixNano())
 		start := rand.Intn(250) // from 0 to 249
 		rand.Seed(time.Now().UnixNano())
-		end := rand.Intn(250) + 250  // from 250 to 499
-		res:= tree1.IntervalSearch(&Point{start, nil}, &Point{end, nil})
+		end := rand.Intn(250) + 250 // from 250 to 499
+		res := tree1.IntervalSearch(&Point{start, nil}, &Point{end, nil})
 		if len(res) != (end - start + 1) {
-			t.Fatalf("EXPECTING %d ELEMENTS, RECEIVED %d", end - start + 1, len(res))
+			t.Fatalf("EXPECTING %d ELEMENTS, RECEIVED %d", end-start+1, len(res))
 		}
+	}
+}
+
+func TestGetPredSucc(t *testing.T) {
+	// Creates data
+	var points1 []Comparable
+	// Create all point from 0 to 499
+	for i := 0; i < 500; i++ {
+		points1 = append(points1, &Point{
+			p: i,
+		})
+	}
+	tree := NewBSTReady(points1)
+	pred, ele, succ := tree.GetPredSucc(&Point{p: 300})
+	if succ == nil || ele == nil || pred == nil {
+		t.Fatalf("Must not return nil for existing data")
+	}
+	if pred.(*Point).p != 299 {
+		t.Fatalf("Expecting %d but got %d", 299, pred.(*Point).p)
+	}
+	if ele.(*Point).p != 300 {
+		t.Fatalf("Expecting %d but got %d", 300, ele.(*Point).p)
+	}
+	if succ.(*Point).p != 301 {
+		t.Fatalf("Expecting %d but got %d", 301, succ.(*Point).p)
+	}
+
+	// SMALLEST
+	pred, ele, succ = tree.GetPredSucc(&Point{p: 0})
+	if pred != nil {
+		t.Fatalf("Expecting nil but got %d", pred.(*Point).p)
+	}
+	if ele.(*Point).p != 0 {
+		t.Fatalf("Expecting %d but got %d", 0, ele.(*Point).p)
+	}
+	if succ.(*Point).p != 1 {
+		t.Fatalf("Expecting %d but got %d", 1, succ.(*Point).p)
+	}
+	// BIGGEST
+	pred, ele, succ = tree.GetPredSucc(&Point{p: 499})
+	if pred.(*Point).p != 498 {
+		t.Fatalf("Expecting %d but got %d", 498, pred.(*Point).p)
+	}
+	if ele.(*Point).p != 499 {
+		t.Fatalf("Expecting %d but got %d", 499, ele.(*Point).p)
+	}
+	if succ != nil {
+		t.Fatalf("Expecting nil but got %d", succ.(*Point).p)
+	}
+	// ABOVE
+	pred, ele, succ = tree.GetPredSucc(&Point{p: 5000})
+	if pred.(*Point).p != 499 {
+		t.Fatalf("Expecting %d but got %d", 499, pred.(*Point).p)
+	}
+	if ele != nil {
+		t.Fatalf("Expecting nil but got %d", ele.(*Point).p)
+	}
+	if succ != nil {
+		t.Fatalf("Expecting nil but got %d", succ.(*Point).p)
+	}
+
+	// BELLOW
+	pred, ele, succ = tree.GetPredSucc(&Point{p: -10})
+	if pred != nil {
+		t.Fatalf("Expecting nil but got %d", pred.(*Point).p)
+	}
+	if ele != nil {
+		t.Fatalf("Expecting nil but got %d", ele.(*Point).p)
+	}
+	if succ.(*Point).p != 0 {
+		t.Fatalf("Expecting %d but got %d", 0, succ.(*Point).p)
 	}
 }

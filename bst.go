@@ -94,6 +94,31 @@ func (bst *BST) Get(e Comparable) (Comparable, error) {
 	return itr.Consult().(Comparable), nil
 }
 
+func (bst *BST) GetPredSucc(e Comparable) (pred, ele, succ Comparable) {
+	itr := bst.tree.Root()
+	for !itr.IsBottom() {
+		current := itr.Consult().(Comparable)
+		if e.CompareTo(current) == 0 {
+			if itr.HasRight() {
+				succ = itr.Right().LeftMost().Up().Consult().(Comparable)
+			}
+			if itr.HasLeft() {
+				pred = itr.Left().RightMost().Up().Consult().(Comparable)
+			}
+			ele = itr.Consult().(Comparable)
+			break
+		} else if e.CompareTo(current) < 0 {
+			succ = itr.Consult().(Comparable)
+			itr = itr.Left()
+		} else {
+			pred = itr.Consult().(Comparable)
+			itr = itr.Right()
+		}
+	}
+
+	return pred, ele, succ
+}
+
 // intervalSearch returns all elements in the interval [min, max] (inclusive) from the iterator position
 func intervalSearch(itr *binarytree.Iterator, min, max Comparable) []Comparable {
 	var res []Comparable
