@@ -1,6 +1,7 @@
 package bst
 
 import (
+	"errors"
 	"github.com/RomainAgostinelli/binarytree"
 	"log"
 )
@@ -83,6 +84,14 @@ func (bst *BST) Size() int {
 // IntervalSearch returns all elements in the interval [min, max] (inclusive)
 func (bst *BST) IntervalSearch(min, max Comparable) []Comparable {
 	return intervalSearch(bst.tree.Root(), min, max)
+}
+
+func (bst *BST) Get(e Comparable) (Comparable, error) {
+	itr := bst.locate(e)
+	if itr.IsBottom() {
+		return nil, errors.New("element not present, please use Contains method before")
+	}
+	return itr.Consult().(Comparable), nil
 }
 
 // intervalSearch returns all elements in the interval [min, max] (inclusive) from the iterator position
