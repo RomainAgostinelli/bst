@@ -1,5 +1,5 @@
-module github.com/RomainAgostinelli/bst
+module github.com/ag0st/bst
 
-go 1.16
+go 1.18
 
-require github.com/RomainAgostinelli/binarytree v0.0.0-20210621135932-374a0206c3e3
+require github.com/ag0st/binarytree v0.0.0-20220412222724-22db34257cac // indirect

@@ -2,7 +2,7 @@ package bst
 
 import (
 	"errors"
-	"github.com/RomainAgostinelli/binarytree"
+	"github.com/ag0st/binarytree"
 	"log"
 )
 
